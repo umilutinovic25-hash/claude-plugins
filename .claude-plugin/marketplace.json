@@ -1,0 +1,10 @@
+{
+  "name": "uros-plugins",
+  "owner": { "name": "Uroš Milutinović", "url": "https://github.com/umilutinovic25-hash" },
+  "metadata": { "description": "Claude Code plugins for Serbian job search, LLM app security hardening and social video recutting." },
+  "plugins": [
+    { "name": "serbia-job-search", "source": "./plugins/serbia-job-search", "category": "productivity", "tags": ["jobs", "serbia", "mcp"] },
+    { "name": "llm-agent-hardening", "source": "./plugins/llm-agent-hardening", "category": "security", "tags": ["security", "llm", "owasp"] },
+    { "name": "social-video-recut", "source": "./plugins/social-video-recut", "category": "media", "tags": ["video", "ffmpeg", "captions"] }
+  ]
+}

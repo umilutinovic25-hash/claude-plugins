@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=__W__, height=__H__" />
+    <title>Caption overlay</title>
+    <script src="assets/gsap.min.js"></script>
+    <script src="data.js"></script>
+    <style>
+      @font-face { font-family: "MontBlack"; src: url("assets/Montserrat-Black.ttf") format("truetype"); font-weight: 900; }
+      body { margin: 0; background: transparent; }
+      #root { position: relative; width: __W__px; height: __H__px; overflow: hidden; }
+      #frame { position: absolute; inset: 0; }
+      #scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 28%; background: linear-gradient(to top, rgba(0,0,0,0.42), rgba(0,0,0,0)); }
+      .cap { position: absolute; left: 40px; right: 40px; height: 150px; display: flex; align-items: center; justify-content: center;
+        flex-wrap: wrap; column-gap: 0.3em; opacity: 0; transform-origin: 50% 60%; }
+      .cap span { display: inline-block; font-family: "MontBlack", sans-serif; font-weight: 900; line-height: 1; letter-spacing: -0.5px;
+        color: #fff; text-transform: uppercase; paint-order: stroke fill; text-shadow: 0 6px 0 rgba(0,0,0,0.55); }
+      .cap span.k { color: #FFD60A; }
+      #hook { position: absolute; top: 44px; left: 0; right: 0; display: flex; justify-content: center; opacity: 0; }
+      #hook div { display: block; background: #FFD60A; color: #000; font-family: "MontBlack", sans-serif; font-size: 40px; padding: 16px 30px 14px;
+        border-radius: 14px; border: 5px solid #000; box-shadow: 0 8px 0 #000; transform: rotate(-2deg); white-space: nowrap; }
+      .chip { position: absolute; top: 44px; left: 40px; display: flex; align-items: center; gap: 14px; background: #000; color: #fff;
+        font-family: "MontBlack", sans-serif; font-size: 40px; padding: 14px 26px 12px 22px; border-radius: 12px; border: 4px solid #fff; opacity: 0; white-space: nowrap; }
+      .chip i { display: block; width: 22px; height: 22px; border-radius: 50%; background: #FF3B30; }
+      #stamp { position: absolute; left: 0; right: 0; height: 330px; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; }
+      #stamp .lbl { display: block; background: #fff; color: #000; font-family: "MontBlack", sans-serif; font-size: 44px; padding: 12px 26px 10px;
+        border-radius: 12px; border: 5px solid #000; transform: rotate(-3deg); margin-bottom: 18px; white-space: nowrap; }
+      #stamp .num { display: block; font-family: "MontBlack", sans-serif; font-size: 190px; line-height: 1; color: #FFD60A; -webkit-text-stroke: 22px #000;
+        paint-order: stroke fill; text-shadow: 0 12px 0 rgba(0,0,0,0.6); transform: rotate(-3deg); white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="__W__" data-height="__H__" data-duration="__DUR__">
+      <div id="frame" class="clip" data-start="0" data-duration="__DUR__" data-track-index="0"></div>
+      <div id="scrim"></div>
+      <div id="caps"></div>
+      <div id="hook"><div id="hook-text"></div></div>
+      <div id="chips"></div>
+      <div id="flash" style="position:absolute;inset:0;background:#fff;opacity:0"></div>
+      <div id="dip" style="position:absolute;inset:0;background:#000;opacity:0"></div>
+      <div id="stamp"><div class="lbl" id="stamp-lbl"></div><div class="num" id="stamp-num"></div></div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const host = document.getElementById("caps");
+      CAPS.forEach((c, i) => {
+        const el = document.createElement("div");
+        el.className = "cap"; el.id = "cap-" + i;
+        el.style.top = (c.hi ? OVL.capYHi : OVL.capY) + "px";
+        el.style.fontSize = OVL.fontPx + "px"; // column-gap is in em of the CONTAINER -> must carry the font size
+        c.w.forEach((w) => {
+          const s = document.createElement("span");
+          s.textContent = w.t; if (w.k) s.className = "k";
+          s.style.webkitTextStroke = Math.round(OVL.fontPx * 0.19) + "px #000";
+          el.appendChild(s);
+        });
+        host.appendChild(el);
+        // tween must never outlast the caption, or tl.set(opacity 0) is overridden and the caption sticks
+        tl.fromTo(el, { opacity: 0, scale: 0.8, y: 16 }, { opacity: 1, scale: 1, y: 0, duration: Math.min(0.11, (c.e - c.s) / 2), ease: "back.out(2.6)" }, c.s);
+        tl.set(el, { opacity: 0 }, c.e);
+      });
+      if (OVL.hook) {
+        document.getElementById("hook-text").textContent = OVL.hook[0];
+        tl.fromTo("#hook", { opacity: 0, y: -40, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(2)" }, 0.05);
+        tl.to("#hook", { opacity: 0, y: -30, duration: 0.25, ease: "power2.in" }, Math.max(0.5, OVL.hook[1] - 0.25));
+      }
+      OVL.chips.forEach((c, i) => {
+        const el = document.createElement("div"); el.className = "chip"; el.id = "chip-" + i;
+        const dot = document.createElement("i"); const txt = document.createElement("span"); txt.textContent = c.text;
+        el.appendChild(dot); el.appendChild(txt); document.getElementById("chips").appendChild(el);
+        tl.fromTo(el, { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.22, ease: "power3.out" }, c.s);
+        tl.fromTo(dot, { opacity: 1 }, { opacity: 0.25, duration: 0.4, repeat: Math.max(0, Math.floor((c.d - 0.5) / 0.4) - 1), yoyo: true, ease: "none" }, c.s + 0.2);
+        tl.to(el, { opacity: 0, x: -40, duration: 0.2, ease: "power2.in" }, c.s + c.d);
+      });
+      if (OVL.stamp) {
+        const st = document.getElementById("stamp");
+        st.style.top = Math.round(OVL.H * 0.435) + "px";
+        document.getElementById("stamp-lbl").textContent = OVL.stamp.label;
+        document.getElementById("stamp-num").textContent = OVL.stamp.text;
+        tl.fromTo(st, { opacity: 0, scale: 2.1 }, { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(1.8)" }, OVL.stamp.s);
+        tl.fromTo(st, { x: -8 }, { x: 8, duration: 0.05, repeat: 5, yoyo: true, ease: "none" }, OVL.stamp.s + 0.32);
+        tl.to(st, { opacity: 0, scale: 0.92, duration: 0.3, ease: "power2.in" }, OVL.stamp.s + OVL.stamp.d);
+      }
+      (OVL.transitions || []).forEach((tr) => {
+        const t = tr.t;
+        if (tr.kind === "flash") {
+          tl.fromTo("#flash", { opacity: 0 }, { opacity: 0.85, duration: 0.07, ease: "power2.in", immediateRender: false }, Math.max(0, t - 0.07));
+          tl.to("#flash", { opacity: 0, duration: 0.2, ease: "power2.out" }, t);
+        } else if (tr.kind === "dip") {
+          tl.fromTo("#dip", { opacity: 0 }, { opacity: 1, duration: 0.18, ease: "power1.in", immediateRender: false }, Math.max(0, t - 0.18));
+          tl.to("#dip", { opacity: 0, duration: 0.28, ease: "power1.out" }, t + 0.04);
+        }
+      });
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

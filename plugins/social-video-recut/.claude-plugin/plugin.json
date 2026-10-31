@@ -1,0 +1,9 @@
+{
+  "name": "social-video-recut",
+  "version": "1.0.0",
+  "description": "Recut long landscape videos into 1:1 or 9:16 social edits with face-tracked crops, transitions and burned-in word captions.",
+  "author": { "name": "Uroš Milutinović", "url": "https://github.com/umilutinovic25-hash" },
+  "repository": "https://github.com/umilutinovic25-hash/claude-plugins",
+  "license": "MIT",
+  "keywords": ["video", "ffmpeg", "captions", "reels", "tiktok"]
+}

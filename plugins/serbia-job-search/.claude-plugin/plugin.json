@@ -1,0 +1,9 @@
+{
+  "name": "serbia-job-search",
+  "version": "1.0.0",
+  "description": "Find and verify junior/medior tech jobs in Serbia: Infostud + HelloWorld.rs MCP server plus a verification and application workflow.",
+  "author": { "name": "Uroš Milutinović", "url": "https://github.com/umilutinovic25-hash" },
+  "repository": "https://github.com/umilutinovic25-hash/claude-plugins",
+  "license": "MIT",
+  "keywords": ["jobs", "serbia", "infostud", "helloworld", "mcp"]
+}

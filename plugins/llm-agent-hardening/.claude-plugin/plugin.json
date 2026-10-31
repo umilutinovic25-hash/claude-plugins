@@ -1,0 +1,9 @@
+{
+  "name": "llm-agent-hardening",
+  "version": "1.0.0",
+  "description": "Harden web apps that call LLMs or run agent tool loops: missed boundaries, footgun scanner and evidence-producing security tests.",
+  "author": { "name": "Uroš Milutinović", "url": "https://github.com/umilutinovic25-hash" },
+  "repository": "https://github.com/umilutinovic25-hash/claude-plugins",
+  "license": "MIT",
+  "keywords": ["security", "llm", "agents", "owasp"]
+}

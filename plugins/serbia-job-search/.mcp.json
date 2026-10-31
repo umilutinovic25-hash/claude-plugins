@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "poslovi": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/umilutinovic25-hash/poslovi-mcp", "poslovi-mcp"]
+    }
+  }
+}
